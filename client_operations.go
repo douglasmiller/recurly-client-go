@@ -440,7 +440,7 @@ func (list *ListAccountsParams) URLParams() []KeyValue {
 func (c *Client) ListAccounts(params *ListAccountsParams) *AccountList {
 	path := "/accounts"
 	path = BuildUrl(path, params)
-	return NewAccountList(c, path)
+	return NewAccountList(c, path, params)
 }
 
 // CreateAccount Create an account
@@ -1455,7 +1455,7 @@ func (list *ListChildAccountsParams) URLParams() []KeyValue {
 func (c *Client) ListChildAccounts(accountId string, params *ListChildAccountsParams) *AccountList {
 	path := c.InterpolatePath("/accounts/{account_id}/accounts", accountId)
 	path = BuildUrl(path, params)
-	return NewAccountList(c, path)
+	return NewAccountList(c, path, params)
 }
 
 type ListAccountAcquisitionParams struct {

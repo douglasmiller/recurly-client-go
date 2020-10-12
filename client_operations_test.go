@@ -1,8 +1,10 @@
 package recurly
 
 import (
+	"context"
 	"net/http"
 	"testing"
+	"time"
 )
 
 func TestCreateAccount(test *testing.T) {
@@ -59,10 +61,14 @@ func TestListAccounts(test *testing.T) {
 	}
 	client := scenario.MockHTTPClient()
 
+	ctx, _ := context.WithTimeout(context.Background(), time.Microsecond)
 	params := &ListAccountsParams{
 		Sort:  String("created_at"),
 		Order: String("desc"),
 		Limit: Int(1),
+		Params: Params {
+			Context: ctx,
+		},
 	}
 	accounts := client.ListAccounts(params)
 	accounts.Fetch()

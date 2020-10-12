@@ -411,15 +411,17 @@ func (resource *accountList) setResponse(res *ResponseMetadata) {
 type AccountList struct {
 	client       HttpCaller
 	nextPagePath string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []Account
 }
 
-func NewAccountList(client HttpCaller, nextPagePath string) *AccountList {
+func NewAccountList(client HttpCaller, nextPagePath string, genericParams GenericParams) *AccountList {
 	return &AccountList{
 		client:       client,
 		nextPagePath: nextPagePath,
+		genericParams: genericParams,
 		HasMore:      true,
 	}
 }
@@ -427,7 +429,7 @@ func NewAccountList(client HttpCaller, nextPagePath string) *AccountList {
 // Fetch fetches the next page of data into the `Data` property
 func (list *AccountList) Fetch() error {
 	resources := &accountList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}
