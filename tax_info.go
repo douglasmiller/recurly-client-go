@@ -50,25 +50,27 @@ func (resource *taxInfoList) setResponse(res *ResponseMetadata) {
 
 // TaxInfoList allows you to paginate TaxInfo objects
 type TaxInfoList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []TaxInfo
 }
 
-func NewTaxInfoList(client HttpCaller, nextPagePath string) *TaxInfoList {
+func NewTaxInfoList(client HttpCaller, nextPagePath string, genericParams GenericParams) *TaxInfoList {
 	return &TaxInfoList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *TaxInfoList) Fetch() error {
 	resources := &taxInfoList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

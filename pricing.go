@@ -47,25 +47,27 @@ func (resource *pricingList) setResponse(res *ResponseMetadata) {
 
 // PricingList allows you to paginate Pricing objects
 type PricingList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []Pricing
 }
 
-func NewPricingList(client HttpCaller, nextPagePath string) *PricingList {
+func NewPricingList(client HttpCaller, nextPagePath string, genericParams GenericParams) *PricingList {
 	return &PricingList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *PricingList) Fetch() error {
 	resources := &pricingList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

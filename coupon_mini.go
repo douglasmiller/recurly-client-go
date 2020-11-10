@@ -67,25 +67,27 @@ func (resource *couponMiniList) setResponse(res *ResponseMetadata) {
 
 // CouponMiniList allows you to paginate CouponMini objects
 type CouponMiniList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []CouponMini
 }
 
-func NewCouponMiniList(client HttpCaller, nextPagePath string) *CouponMiniList {
+func NewCouponMiniList(client HttpCaller, nextPagePath string, genericParams GenericParams) *CouponMiniList {
 	return &CouponMiniList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *CouponMiniList) Fetch() error {
 	resources := &couponMiniList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

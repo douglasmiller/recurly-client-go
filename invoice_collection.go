@@ -49,25 +49,27 @@ func (resource *invoiceCollectionList) setResponse(res *ResponseMetadata) {
 
 // InvoiceCollectionList allows you to paginate InvoiceCollection objects
 type InvoiceCollectionList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []InvoiceCollection
 }
 
-func NewInvoiceCollectionList(client HttpCaller, nextPagePath string) *InvoiceCollectionList {
+func NewInvoiceCollectionList(client HttpCaller, nextPagePath string, genericParams GenericParams) *InvoiceCollectionList {
 	return &InvoiceCollectionList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *InvoiceCollectionList) Fetch() error {
 	resources := &invoiceCollectionList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

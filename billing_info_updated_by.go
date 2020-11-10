@@ -47,25 +47,27 @@ func (resource *billingInfoUpdatedByList) setResponse(res *ResponseMetadata) {
 
 // BillingInfoUpdatedByList allows you to paginate BillingInfoUpdatedBy objects
 type BillingInfoUpdatedByList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []BillingInfoUpdatedBy
 }
 
-func NewBillingInfoUpdatedByList(client HttpCaller, nextPagePath string) *BillingInfoUpdatedByList {
+func NewBillingInfoUpdatedByList(client HttpCaller, nextPagePath string, genericParams GenericParams) *BillingInfoUpdatedByList {
 	return &BillingInfoUpdatedByList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *BillingInfoUpdatedByList) Fetch() error {
 	resources := &billingInfoUpdatedByList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

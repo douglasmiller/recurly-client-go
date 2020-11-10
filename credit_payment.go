@@ -83,25 +83,27 @@ func (resource *creditPaymentList) setResponse(res *ResponseMetadata) {
 
 // CreditPaymentList allows you to paginate CreditPayment objects
 type CreditPaymentList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []CreditPayment
 }
 
-func NewCreditPaymentList(client HttpCaller, nextPagePath string) *CreditPaymentList {
+func NewCreditPaymentList(client HttpCaller, nextPagePath string, genericParams GenericParams) *CreditPaymentList {
 	return &CreditPaymentList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *CreditPaymentList) Fetch() error {
 	resources := &creditPaymentList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

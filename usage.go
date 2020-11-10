@@ -89,25 +89,27 @@ func (resource *usageList) setResponse(res *ResponseMetadata) {
 
 // UsageList allows you to paginate Usage objects
 type UsageList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []Usage
 }
 
-func NewUsageList(client HttpCaller, nextPagePath string) *UsageList {
+func NewUsageList(client HttpCaller, nextPagePath string, genericParams GenericParams) *UsageList {
 	return &UsageList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *UsageList) Fetch() error {
 	resources := &usageList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

@@ -59,25 +59,27 @@ func (resource *itemMiniList) setResponse(res *ResponseMetadata) {
 
 // ItemMiniList allows you to paginate ItemMini objects
 type ItemMiniList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []ItemMini
 }
 
-func NewItemMiniList(client HttpCaller, nextPagePath string) *ItemMiniList {
+func NewItemMiniList(client HttpCaller, nextPagePath string, genericParams GenericParams) *ItemMiniList {
 	return &ItemMiniList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *ItemMiniList) Fetch() error {
 	resources := &itemMiniList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

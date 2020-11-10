@@ -186,25 +186,27 @@ func (resource *lineItemList) setResponse(res *ResponseMetadata) {
 
 // LineItemList allows you to paginate LineItem objects
 type LineItemList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []LineItem
 }
 
-func NewLineItemList(client HttpCaller, nextPagePath string) *LineItemList {
+func NewLineItemList(client HttpCaller, nextPagePath string, genericParams GenericParams) *LineItemList {
 	return &LineItemList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *LineItemList) Fetch() error {
 	resources := &lineItemList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

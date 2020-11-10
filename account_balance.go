@@ -51,25 +51,27 @@ func (resource *accountBalanceList) setResponse(res *ResponseMetadata) {
 
 // AccountBalanceList allows you to paginate AccountBalance objects
 type AccountBalanceList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []AccountBalance
 }
 
-func NewAccountBalanceList(client HttpCaller, nextPagePath string) *AccountBalanceList {
+func NewAccountBalanceList(client HttpCaller, nextPagePath string, genericParams GenericParams) *AccountBalanceList {
 	return &AccountBalanceList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *AccountBalanceList) Fetch() error {
 	resources := &accountBalanceList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

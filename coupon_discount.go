@@ -52,25 +52,27 @@ func (resource *couponDiscountList) setResponse(res *ResponseMetadata) {
 
 // CouponDiscountList allows you to paginate CouponDiscount objects
 type CouponDiscountList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []CouponDiscount
 }
 
-func NewCouponDiscountList(client HttpCaller, nextPagePath string) *CouponDiscountList {
+func NewCouponDiscountList(client HttpCaller, nextPagePath string, genericParams GenericParams) *CouponDiscountList {
 	return &CouponDiscountList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *CouponDiscountList) Fetch() error {
 	resources := &couponDiscountList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

@@ -68,25 +68,27 @@ func (resource *accountAcquisitionList) setResponse(res *ResponseMetadata) {
 
 // AccountAcquisitionList allows you to paginate AccountAcquisition objects
 type AccountAcquisitionList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []AccountAcquisition
 }
 
-func NewAccountAcquisitionList(client HttpCaller, nextPagePath string) *AccountAcquisitionList {
+func NewAccountAcquisitionList(client HttpCaller, nextPagePath string, genericParams GenericParams) *AccountAcquisitionList {
 	return &AccountAcquisitionList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *AccountAcquisitionList) Fetch() error {
 	resources := &accountAcquisitionList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

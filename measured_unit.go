@@ -69,25 +69,27 @@ func (resource *measuredUnitList) setResponse(res *ResponseMetadata) {
 
 // MeasuredUnitList allows you to paginate MeasuredUnit objects
 type MeasuredUnitList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []MeasuredUnit
 }
 
-func NewMeasuredUnitList(client HttpCaller, nextPagePath string) *MeasuredUnitList {
+func NewMeasuredUnitList(client HttpCaller, nextPagePath string, genericParams GenericParams) *MeasuredUnitList {
 	return &MeasuredUnitList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *MeasuredUnitList) Fetch() error {
 	resources := &measuredUnitList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

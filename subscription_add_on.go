@@ -91,25 +91,27 @@ func (resource *subscriptionAddOnList) setResponse(res *ResponseMetadata) {
 
 // SubscriptionAddOnList allows you to paginate SubscriptionAddOn objects
 type SubscriptionAddOnList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []SubscriptionAddOn
 }
 
-func NewSubscriptionAddOnList(client HttpCaller, nextPagePath string) *SubscriptionAddOnList {
+func NewSubscriptionAddOnList(client HttpCaller, nextPagePath string, genericParams GenericParams) *SubscriptionAddOnList {
 	return &SubscriptionAddOnList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *SubscriptionAddOnList) Fetch() error {
 	resources := &subscriptionAddOnList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

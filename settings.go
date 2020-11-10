@@ -52,25 +52,27 @@ func (resource *settingsList) setResponse(res *ResponseMetadata) {
 
 // SettingsList allows you to paginate Settings objects
 type SettingsList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []Settings
 }
 
-func NewSettingsList(client HttpCaller, nextPagePath string) *SettingsList {
+func NewSettingsList(client HttpCaller, nextPagePath string, genericParams GenericParams) *SettingsList {
 	return &SettingsList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *SettingsList) Fetch() error {
 	resources := &settingsList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

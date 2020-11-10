@@ -47,25 +47,27 @@ func (resource *exportDatesList) setResponse(res *ResponseMetadata) {
 
 // ExportDatesList allows you to paginate ExportDates objects
 type ExportDatesList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []ExportDates
 }
 
-func NewExportDatesList(client HttpCaller, nextPagePath string) *ExportDatesList {
+func NewExportDatesList(client HttpCaller, nextPagePath string, genericParams GenericParams) *ExportDatesList {
 	return &ExportDatesList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *ExportDatesList) Fetch() error {
 	resources := &exportDatesList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

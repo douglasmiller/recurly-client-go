@@ -53,25 +53,27 @@ func (resource *errorMayHaveTransactionList) setResponse(res *ResponseMetadata) 
 
 // ErrorMayHaveTransactionList allows you to paginate ErrorMayHaveTransaction objects
 type ErrorMayHaveTransactionList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []ErrorMayHaveTransaction
 }
 
-func NewErrorMayHaveTransactionList(client HttpCaller, nextPagePath string) *ErrorMayHaveTransactionList {
+func NewErrorMayHaveTransactionList(client HttpCaller, nextPagePath string, genericParams GenericParams) *ErrorMayHaveTransactionList {
 	return &ErrorMayHaveTransactionList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *ErrorMayHaveTransactionList) Fetch() error {
 	resources := &errorMayHaveTransactionList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

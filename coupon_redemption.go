@@ -71,25 +71,27 @@ func (resource *couponRedemptionList) setResponse(res *ResponseMetadata) {
 
 // CouponRedemptionList allows you to paginate CouponRedemption objects
 type CouponRedemptionList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []CouponRedemption
 }
 
-func NewCouponRedemptionList(client HttpCaller, nextPagePath string) *CouponRedemptionList {
+func NewCouponRedemptionList(client HttpCaller, nextPagePath string, genericParams GenericParams) *CouponRedemptionList {
 	return &CouponRedemptionList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *CouponRedemptionList) Fetch() error {
 	resources := &couponRedemptionList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

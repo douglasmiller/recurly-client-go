@@ -68,25 +68,27 @@ func (resource *addressList) setResponse(res *ResponseMetadata) {
 
 // AddressList allows you to paginate Address objects
 type AddressList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []Address
 }
 
-func NewAddressList(client HttpCaller, nextPagePath string) *AddressList {
+func NewAddressList(client HttpCaller, nextPagePath string, genericParams GenericParams) *AddressList {
 	return &AddressList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *AddressList) Fetch() error {
 	resources := &addressList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

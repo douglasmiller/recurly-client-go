@@ -56,25 +56,27 @@ func (resource *invoiceMiniList) setResponse(res *ResponseMetadata) {
 
 // InvoiceMiniList allows you to paginate InvoiceMini objects
 type InvoiceMiniList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []InvoiceMini
 }
 
-func NewInvoiceMiniList(client HttpCaller, nextPagePath string) *InvoiceMiniList {
+func NewInvoiceMiniList(client HttpCaller, nextPagePath string, genericParams GenericParams) *InvoiceMiniList {
 	return &InvoiceMiniList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *InvoiceMiniList) Fetch() error {
 	resources := &invoiceMiniList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

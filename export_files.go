@@ -46,25 +46,27 @@ func (resource *exportFilesList) setResponse(res *ResponseMetadata) {
 
 // ExportFilesList allows you to paginate ExportFiles objects
 type ExportFilesList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []ExportFiles
 }
 
-func NewExportFilesList(client HttpCaller, nextPagePath string) *ExportFilesList {
+func NewExportFilesList(client HttpCaller, nextPagePath string, genericParams GenericParams) *ExportFilesList {
 	return &ExportFilesList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *ExportFilesList) Fetch() error {
 	resources := &exportFilesList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

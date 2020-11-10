@@ -55,25 +55,27 @@ func (resource *accountNoteList) setResponse(res *ResponseMetadata) {
 
 // AccountNoteList allows you to paginate AccountNote objects
 type AccountNoteList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []AccountNote
 }
 
-func NewAccountNoteList(client HttpCaller, nextPagePath string) *AccountNoteList {
+func NewAccountNoteList(client HttpCaller, nextPagePath string, genericParams GenericParams) *AccountNoteList {
 	return &AccountNoteList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *AccountNoteList) Fetch() error {
 	resources := &accountNoteList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

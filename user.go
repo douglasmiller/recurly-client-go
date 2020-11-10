@@ -59,25 +59,27 @@ func (resource *userList) setResponse(res *ResponseMetadata) {
 
 // UserList allows you to paginate User objects
 type UserList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []User
 }
 
-func NewUserList(client HttpCaller, nextPagePath string) *UserList {
+func NewUserList(client HttpCaller, nextPagePath string, genericParams GenericParams) *UserList {
 	return &UserList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *UserList) Fetch() error {
 	resources := &userList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

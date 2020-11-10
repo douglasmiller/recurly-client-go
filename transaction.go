@@ -157,25 +157,27 @@ func (resource *transactionList) setResponse(res *ResponseMetadata) {
 
 // TransactionList allows you to paginate Transaction objects
 type TransactionList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []Transaction
 }
 
-func NewTransactionList(client HttpCaller, nextPagePath string) *TransactionList {
+func NewTransactionList(client HttpCaller, nextPagePath string, genericParams GenericParams) *TransactionList {
 	return &TransactionList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *TransactionList) Fetch() error {
 	resources := &transactionList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

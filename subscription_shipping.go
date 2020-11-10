@@ -51,25 +51,27 @@ func (resource *subscriptionShippingList) setResponse(res *ResponseMetadata) {
 
 // SubscriptionShippingList allows you to paginate SubscriptionShipping objects
 type SubscriptionShippingList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []SubscriptionShipping
 }
 
-func NewSubscriptionShippingList(client HttpCaller, nextPagePath string) *SubscriptionShippingList {
+func NewSubscriptionShippingList(client HttpCaller, nextPagePath string, genericParams GenericParams) *SubscriptionShippingList {
 	return &SubscriptionShippingList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *SubscriptionShippingList) Fetch() error {
 	resources := &subscriptionShippingList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

@@ -53,25 +53,27 @@ func (resource *shippingMethodMiniList) setResponse(res *ResponseMetadata) {
 
 // ShippingMethodMiniList allows you to paginate ShippingMethodMini objects
 type ShippingMethodMiniList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []ShippingMethodMini
 }
 
-func NewShippingMethodMiniList(client HttpCaller, nextPagePath string) *ShippingMethodMiniList {
+func NewShippingMethodMiniList(client HttpCaller, nextPagePath string, genericParams GenericParams) *ShippingMethodMiniList {
 	return &ShippingMethodMiniList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *ShippingMethodMiniList) Fetch() error {
 	resources := &shippingMethodMiniList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

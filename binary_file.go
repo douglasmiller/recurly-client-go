@@ -43,25 +43,27 @@ func (resource *binaryFileList) setResponse(res *ResponseMetadata) {
 
 // BinaryFileList allows you to paginate BinaryFile objects
 type BinaryFileList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []BinaryFile
 }
 
-func NewBinaryFileList(client HttpCaller, nextPagePath string) *BinaryFileList {
+func NewBinaryFileList(client HttpCaller, nextPagePath string, genericParams GenericParams) *BinaryFileList {
 	return &BinaryFileList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *BinaryFileList) Fetch() error {
 	resources := &binaryFileList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

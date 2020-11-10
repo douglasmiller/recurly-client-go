@@ -74,25 +74,27 @@ func (resource *invoiceAddressList) setResponse(res *ResponseMetadata) {
 
 // InvoiceAddressList allows you to paginate InvoiceAddress objects
 type InvoiceAddressList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []InvoiceAddress
 }
 
-func NewInvoiceAddressList(client HttpCaller, nextPagePath string) *InvoiceAddressList {
+func NewInvoiceAddressList(client HttpCaller, nextPagePath string, genericParams GenericParams) *InvoiceAddressList {
 	return &InvoiceAddressList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *InvoiceAddressList) Fetch() error {
 	resources := &invoiceAddressList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

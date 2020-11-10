@@ -72,25 +72,27 @@ func (resource *uniqueCouponCodeList) setResponse(res *ResponseMetadata) {
 
 // UniqueCouponCodeList allows you to paginate UniqueCouponCode objects
 type UniqueCouponCodeList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []UniqueCouponCode
 }
 
-func NewUniqueCouponCodeList(client HttpCaller, nextPagePath string) *UniqueCouponCodeList {
+func NewUniqueCouponCodeList(client HttpCaller, nextPagePath string, genericParams GenericParams) *UniqueCouponCodeList {
 	return &UniqueCouponCodeList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *UniqueCouponCodeList) Fetch() error {
 	resources := &uniqueCouponCodeList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}

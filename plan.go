@@ -125,25 +125,27 @@ func (resource *planList) setResponse(res *ResponseMetadata) {
 
 // PlanList allows you to paginate Plan objects
 type PlanList struct {
-	client       HttpCaller
-	nextPagePath string
+	client        HttpCaller
+	nextPagePath  string
+	genericParams GenericParams
 
 	HasMore bool
 	Data    []Plan
 }
 
-func NewPlanList(client HttpCaller, nextPagePath string) *PlanList {
+func NewPlanList(client HttpCaller, nextPagePath string, genericParams GenericParams) *PlanList {
 	return &PlanList{
-		client:       client,
-		nextPagePath: nextPagePath,
-		HasMore:      true,
+		client:        client,
+		nextPagePath:  nextPagePath,
+		genericParams: genericParams,
+		HasMore:       true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
 func (list *PlanList) Fetch() error {
 	resources := &planList{}
-	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, list.genericParams, resources)
 	if err != nil {
 		return err
 	}
