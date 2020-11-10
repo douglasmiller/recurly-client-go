@@ -1,8 +1,10 @@
 package recurly
 
 import (
+	"context"
 	"net/http"
 	"testing"
+	"time"
 )
 
 func TestCreateAccount(test *testing.T) {
@@ -20,11 +22,19 @@ func TestCreateAccount(test *testing.T) {
 	}
 	client := scenario.MockHTTPClient()
 
+	headers := http.Header{}
+	headers.Add("Doug", "Miller")
+	ctx, _ := context.WithTimeout(context.Background(), time.Microsecond)
 	body := &AccountCreate{
+		Params: Params{
+			IdempotencyKey: "my-idemp-key",
+			Header:         headers,
+			Context:        ctx,
+		},
 		Code: String("new_account"),
 	}
 
-	account, _ := client.CreateAccount(body)
+	account, _ := client.CreateAccount(body, &CreateAccountParams{})
 	t.Assert(account.Id, "abcd1234", "account.Id")
 }
 

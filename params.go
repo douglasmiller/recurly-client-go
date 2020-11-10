@@ -23,6 +23,8 @@ type Params struct {
 	Header http.Header `json:"-"`
 	// Context passed to the HTTP request for cancelling requests
 	Context context.Context `json:"-"`
+	// Denotes whether these Params are for a List operation
+	IsListOp bool `json:"-"`
 
 	RequestParams `json:"-"`
 

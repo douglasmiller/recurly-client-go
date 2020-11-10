@@ -163,7 +163,7 @@ func BuildUrl(requestURL string, genericParams GenericParams) string {
 		params = genericParams.toParams()
 	}
 
-	if params != nil {
+	if params != nil && !params.IsListOp {
 		if keyValues := params.URLParams(); len(keyValues) > 0 {
 			var buf bytes.Buffer
 			buf.WriteString(requestURL)
