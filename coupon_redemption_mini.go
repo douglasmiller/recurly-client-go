@@ -5,7 +5,6 @@
 package recurly
 
 import (
-	"context"
 	"net/http"
 	"time"
 )
@@ -60,27 +59,25 @@ func (resource *couponRedemptionMiniList) setResponse(res *ResponseMetadata) {
 
 // CouponRedemptionMiniList allows you to paginate CouponRedemptionMini objects
 type CouponRedemptionMiniList struct {
-	client         HTTPCaller
-	requestOptions *RequestOptions
-	nextPagePath   string
+	client       HttpCaller
+	nextPagePath string
 
 	HasMore bool
 	Data    []CouponRedemptionMini
 }
 
-func NewCouponRedemptionMiniList(client HTTPCaller, nextPagePath string, requestOptions *RequestOptions) *CouponRedemptionMiniList {
+func NewCouponRedemptionMiniList(client HttpCaller, nextPagePath string) *CouponRedemptionMiniList {
 	return &CouponRedemptionMiniList{
-		client:         client,
-		requestOptions: requestOptions,
-		nextPagePath:   nextPagePath,
-		HasMore:        true,
+		client:       client,
+		nextPagePath: nextPagePath,
+		HasMore:      true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
-func (list *CouponRedemptionMiniList) FetchWithContext(ctx context.Context) error {
+func (list *CouponRedemptionMiniList) Fetch() error {
 	resources := &couponRedemptionMiniList{}
-	err := list.client.Call(ctx, http.MethodGet, list.nextPagePath, nil, nil, list.requestOptions, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
 	if err != nil {
 		return err
 	}
@@ -91,23 +88,13 @@ func (list *CouponRedemptionMiniList) FetchWithContext(ctx context.Context) erro
 	return nil
 }
 
-// Fetch fetches the next page of data into the `Data` property
-func (list *CouponRedemptionMiniList) Fetch() error {
-	return list.FetchWithContext(context.Background())
-}
-
 // Count returns the count of items on the server that match this pager
-func (list *CouponRedemptionMiniList) CountWithContext(ctx context.Context) (*int64, error) {
+func (list *CouponRedemptionMiniList) Count() (*int64, error) {
 	resources := &couponRedemptionMiniList{}
-	err := list.client.Call(ctx, http.MethodHead, list.nextPagePath, nil, nil, list.requestOptions, resources)
+	err := list.client.Call(http.MethodHead, list.nextPagePath, nil, resources)
 	if err != nil {
 		return nil, err
 	}
 	resp := resources.GetResponse()
 	return resp.TotalRecords, nil
-}
-
-// Count returns the count of items on the server that match this pager
-func (list *CouponRedemptionMiniList) Count() (*int64, error) {
-	return list.CountWithContext(context.Background())
 }

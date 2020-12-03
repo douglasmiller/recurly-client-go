@@ -5,7 +5,6 @@
 package recurly
 
 import (
-	"context"
 	"net/http"
 	"time"
 )
@@ -79,27 +78,25 @@ func (resource *shippingMethodList) setResponse(res *ResponseMetadata) {
 
 // ShippingMethodList allows you to paginate ShippingMethod objects
 type ShippingMethodList struct {
-	client         HTTPCaller
-	requestOptions *RequestOptions
-	nextPagePath   string
+	client       HttpCaller
+	nextPagePath string
 
 	HasMore bool
 	Data    []ShippingMethod
 }
 
-func NewShippingMethodList(client HTTPCaller, nextPagePath string, requestOptions *RequestOptions) *ShippingMethodList {
+func NewShippingMethodList(client HttpCaller, nextPagePath string) *ShippingMethodList {
 	return &ShippingMethodList{
-		client:         client,
-		requestOptions: requestOptions,
-		nextPagePath:   nextPagePath,
-		HasMore:        true,
+		client:       client,
+		nextPagePath: nextPagePath,
+		HasMore:      true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
-func (list *ShippingMethodList) FetchWithContext(ctx context.Context) error {
+func (list *ShippingMethodList) Fetch() error {
 	resources := &shippingMethodList{}
-	err := list.client.Call(ctx, http.MethodGet, list.nextPagePath, nil, nil, list.requestOptions, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
 	if err != nil {
 		return err
 	}
@@ -110,23 +107,13 @@ func (list *ShippingMethodList) FetchWithContext(ctx context.Context) error {
 	return nil
 }
 
-// Fetch fetches the next page of data into the `Data` property
-func (list *ShippingMethodList) Fetch() error {
-	return list.FetchWithContext(context.Background())
-}
-
 // Count returns the count of items on the server that match this pager
-func (list *ShippingMethodList) CountWithContext(ctx context.Context) (*int64, error) {
+func (list *ShippingMethodList) Count() (*int64, error) {
 	resources := &shippingMethodList{}
-	err := list.client.Call(ctx, http.MethodHead, list.nextPagePath, nil, nil, list.requestOptions, resources)
+	err := list.client.Call(http.MethodHead, list.nextPagePath, nil, resources)
 	if err != nil {
 		return nil, err
 	}
 	resp := resources.GetResponse()
 	return resp.TotalRecords, nil
-}
-
-// Count returns the count of items on the server that match this pager
-func (list *ShippingMethodList) Count() (*int64, error) {
-	return list.CountWithContext(context.Background())
 }

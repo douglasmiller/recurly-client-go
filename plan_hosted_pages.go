@@ -5,7 +5,6 @@
 package recurly
 
 import (
-	"context"
 	"net/http"
 )
 
@@ -54,27 +53,25 @@ func (resource *planHostedPagesList) setResponse(res *ResponseMetadata) {
 
 // PlanHostedPagesList allows you to paginate PlanHostedPages objects
 type PlanHostedPagesList struct {
-	client         HTTPCaller
-	requestOptions *RequestOptions
-	nextPagePath   string
+	client       HttpCaller
+	nextPagePath string
 
 	HasMore bool
 	Data    []PlanHostedPages
 }
 
-func NewPlanHostedPagesList(client HTTPCaller, nextPagePath string, requestOptions *RequestOptions) *PlanHostedPagesList {
+func NewPlanHostedPagesList(client HttpCaller, nextPagePath string) *PlanHostedPagesList {
 	return &PlanHostedPagesList{
-		client:         client,
-		requestOptions: requestOptions,
-		nextPagePath:   nextPagePath,
-		HasMore:        true,
+		client:       client,
+		nextPagePath: nextPagePath,
+		HasMore:      true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
-func (list *PlanHostedPagesList) FetchWithContext(ctx context.Context) error {
+func (list *PlanHostedPagesList) Fetch() error {
 	resources := &planHostedPagesList{}
-	err := list.client.Call(ctx, http.MethodGet, list.nextPagePath, nil, nil, list.requestOptions, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
 	if err != nil {
 		return err
 	}
@@ -85,23 +82,13 @@ func (list *PlanHostedPagesList) FetchWithContext(ctx context.Context) error {
 	return nil
 }
 
-// Fetch fetches the next page of data into the `Data` property
-func (list *PlanHostedPagesList) Fetch() error {
-	return list.FetchWithContext(context.Background())
-}
-
 // Count returns the count of items on the server that match this pager
-func (list *PlanHostedPagesList) CountWithContext(ctx context.Context) (*int64, error) {
+func (list *PlanHostedPagesList) Count() (*int64, error) {
 	resources := &planHostedPagesList{}
-	err := list.client.Call(ctx, http.MethodHead, list.nextPagePath, nil, nil, list.requestOptions, resources)
+	err := list.client.Call(http.MethodHead, list.nextPagePath, nil, resources)
 	if err != nil {
 		return nil, err
 	}
 	resp := resources.GetResponse()
 	return resp.TotalRecords, nil
-}
-
-// Count returns the count of items on the server that match this pager
-func (list *PlanHostedPagesList) Count() (*int64, error) {
-	return list.CountWithContext(context.Background())
 }

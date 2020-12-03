@@ -5,7 +5,6 @@
 package recurly
 
 import (
-	"context"
 	"net/http"
 )
 
@@ -48,27 +47,25 @@ func (resource *billingInfoUpdatedByList) setResponse(res *ResponseMetadata) {
 
 // BillingInfoUpdatedByList allows you to paginate BillingInfoUpdatedBy objects
 type BillingInfoUpdatedByList struct {
-	client         HTTPCaller
-	requestOptions *RequestOptions
-	nextPagePath   string
+	client       HttpCaller
+	nextPagePath string
 
 	HasMore bool
 	Data    []BillingInfoUpdatedBy
 }
 
-func NewBillingInfoUpdatedByList(client HTTPCaller, nextPagePath string, requestOptions *RequestOptions) *BillingInfoUpdatedByList {
+func NewBillingInfoUpdatedByList(client HttpCaller, nextPagePath string) *BillingInfoUpdatedByList {
 	return &BillingInfoUpdatedByList{
-		client:         client,
-		requestOptions: requestOptions,
-		nextPagePath:   nextPagePath,
-		HasMore:        true,
+		client:       client,
+		nextPagePath: nextPagePath,
+		HasMore:      true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
-func (list *BillingInfoUpdatedByList) FetchWithContext(ctx context.Context) error {
+func (list *BillingInfoUpdatedByList) Fetch() error {
 	resources := &billingInfoUpdatedByList{}
-	err := list.client.Call(ctx, http.MethodGet, list.nextPagePath, nil, nil, list.requestOptions, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
 	if err != nil {
 		return err
 	}
@@ -79,23 +76,13 @@ func (list *BillingInfoUpdatedByList) FetchWithContext(ctx context.Context) erro
 	return nil
 }
 
-// Fetch fetches the next page of data into the `Data` property
-func (list *BillingInfoUpdatedByList) Fetch() error {
-	return list.FetchWithContext(context.Background())
-}
-
 // Count returns the count of items on the server that match this pager
-func (list *BillingInfoUpdatedByList) CountWithContext(ctx context.Context) (*int64, error) {
+func (list *BillingInfoUpdatedByList) Count() (*int64, error) {
 	resources := &billingInfoUpdatedByList{}
-	err := list.client.Call(ctx, http.MethodHead, list.nextPagePath, nil, nil, list.requestOptions, resources)
+	err := list.client.Call(http.MethodHead, list.nextPagePath, nil, resources)
 	if err != nil {
 		return nil, err
 	}
 	resp := resources.GetResponse()
 	return resp.TotalRecords, nil
-}
-
-// Count returns the count of items on the server that match this pager
-func (list *BillingInfoUpdatedByList) Count() (*int64, error) {
-	return list.CountWithContext(context.Background())
 }

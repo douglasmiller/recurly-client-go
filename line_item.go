@@ -5,7 +5,6 @@
 package recurly
 
 import (
-	"context"
 	"net/http"
 	"time"
 )
@@ -187,27 +186,25 @@ func (resource *lineItemList) setResponse(res *ResponseMetadata) {
 
 // LineItemList allows you to paginate LineItem objects
 type LineItemList struct {
-	client         HTTPCaller
-	requestOptions *RequestOptions
-	nextPagePath   string
+	client       HttpCaller
+	nextPagePath string
 
 	HasMore bool
 	Data    []LineItem
 }
 
-func NewLineItemList(client HTTPCaller, nextPagePath string, requestOptions *RequestOptions) *LineItemList {
+func NewLineItemList(client HttpCaller, nextPagePath string) *LineItemList {
 	return &LineItemList{
-		client:         client,
-		requestOptions: requestOptions,
-		nextPagePath:   nextPagePath,
-		HasMore:        true,
+		client:       client,
+		nextPagePath: nextPagePath,
+		HasMore:      true,
 	}
 }
 
 // Fetch fetches the next page of data into the `Data` property
-func (list *LineItemList) FetchWithContext(ctx context.Context) error {
+func (list *LineItemList) Fetch() error {
 	resources := &lineItemList{}
-	err := list.client.Call(ctx, http.MethodGet, list.nextPagePath, nil, nil, list.requestOptions, resources)
+	err := list.client.Call(http.MethodGet, list.nextPagePath, nil, resources)
 	if err != nil {
 		return err
 	}
@@ -218,23 +215,13 @@ func (list *LineItemList) FetchWithContext(ctx context.Context) error {
 	return nil
 }
 
-// Fetch fetches the next page of data into the `Data` property
-func (list *LineItemList) Fetch() error {
-	return list.FetchWithContext(context.Background())
-}
-
 // Count returns the count of items on the server that match this pager
-func (list *LineItemList) CountWithContext(ctx context.Context) (*int64, error) {
+func (list *LineItemList) Count() (*int64, error) {
 	resources := &lineItemList{}
-	err := list.client.Call(ctx, http.MethodHead, list.nextPagePath, nil, nil, list.requestOptions, resources)
+	err := list.client.Call(http.MethodHead, list.nextPagePath, nil, resources)
 	if err != nil {
 		return nil, err
 	}
 	resp := resources.GetResponse()
 	return resp.TotalRecords, nil
-}
-
-// Count returns the count of items on the server that match this pager
-func (list *LineItemList) Count() (*int64, error) {
-	return list.CountWithContext(context.Background())
 }
