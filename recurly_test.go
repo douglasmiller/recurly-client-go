@@ -2,6 +2,7 @@ package recurly
 
 import (
 	"bytes"
+	"context"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -152,29 +153,25 @@ func (attr *ResourceCreate) toParams() *Params {
 
 // We also implement fake CRUD operations for these fake resources
 // We want to use the Client from the consuming code's perspective
-func (c *Client) GetResource(resourceId string) (*RecurlyResource, error) {
+func (c *Client) GetResource(resourceId string, opts ...Option) (*RecurlyResource, error) {
 	path, err := c.InterpolatePath("/resources/{resource_id}", resourceId)
 	if err != nil {
 		return nil, err
 	}
+	requestOptions := NewRequestOptions(opts...)
 	result := &RecurlyResource{}
-	err = c.Call(http.MethodGet, path, nil, result)
-	if err != nil {
-		return nil, err
-	}
+	err = c.Call(context.Background(), http.MethodGet, path, nil, nil, requestOptions, result)
 	return result, err
 }
 
-func (c *Client) CreateResource(body *ResourceCreate) (*RecurlyResource, error) {
+func (c *Client) CreateResource(body *ResourceCreate, opts ...Option) (*RecurlyResource, error) {
 	path, err := c.InterpolatePath("/resources")
 	if err != nil {
 		return nil, err
 	}
+	requestOptions := NewRequestOptions(opts...)
 	result := &RecurlyResource{}
-	err = c.Call(http.MethodPost, path, body, result)
-	if err != nil {
-		return nil, err
-	}
+	err = c.Call(context.Background(), http.MethodPost, path, body, nil, requestOptions, result)
 	return result, err
 }
 
@@ -183,25 +180,22 @@ func (c *Client) DeleteResource(resourceId string) (*Empty, error) {
 	if err != nil {
 		return nil, err
 	}
+	requestOptions := NewRequestOptions(opts...)
 	result := &Empty{}
 	err = c.Call(http.MethodDelete, path, nil, result)
-	if err != nil {
-		return nil, err
-	}
+	err = c.Call(context.Background(), http.MethodDelete, path, nil, nil, requestOptions, result)
 	return result, err
 }
 
 // ResourceMetada calls the HEAD endpoint and returns the response metadata
-func (c *Client) GetResourceMetadata(resourceId string) (*ResponseMetadata, error) {
+func (c *Client) GetResourceMetadata(resourceId string, opts ...Option) (*ResponseMetadata, error) {
 	path, err := c.InterpolatePath("/resources")
 	if err != nil {
 		return nil, err
 	}
+	requestOptions := NewRequestOptions(opts...)
 	result := &Empty{}
-	err = c.Call(http.MethodHead, path, nil, result)
-	if err != nil {
-		return nil, err
-	}
+	err = c.Call(context.Background(), http.MethodHead, path, nil, nil, requestOptions, result)
 	return result.GetResponse(), err
 }
 

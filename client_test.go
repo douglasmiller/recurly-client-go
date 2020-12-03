@@ -172,15 +172,16 @@ func TestHeadResource200(test *testing.T) {
 	}
 }
 
-func TestEncodePathParameters(test *testing.T) {
+func TestSetCustomHeader(test *testing.T) {
 	t := &T{test}
+
+	hKey := "Doug"
+	hVal := "Miller"
 
 	scenario := &Scenario{
 		T: t,
 		AssertRequest: func(req *http.Request) {
-			t.Assert(req.Method, http.MethodGet, "HTTP Method")
-			t.Assert(req.URL.String(), "https://v3.recurly.com/resources/%2F", "Request URL")
-			// assert headers and other request properties
+			t.Assert(req.Header.Get(hKey), hVal, "Set Custom Header")
 		},
 		MakeResponse: func(req *http.Request) *http.Response {
 			// default headers set, we may want to customize though
@@ -189,20 +190,17 @@ func TestEncodePathParameters(test *testing.T) {
 	}
 	client := scenario.MockHTTPClient()
 
-	resource, err := client.GetResource("/")
-	t.Assert(err, nil, "Error not expected")
-	t.Assert(resource.Id, "abcd1234", "resource.Id")
+	header := http.Header{hKey: []string{hVal}}
+	client.GetResource("abcd1234", WithHeader(header))
 }
 
-func TestValidatePathParameters(test *testing.T) {
+func TestPreserveInternalHeaders(test *testing.T) {
 	t := &T{test}
 
 	scenario := &Scenario{
 		T: t,
 		AssertRequest: func(req *http.Request) {
-			t.Assert(req.Method, http.MethodGet, "HTTP Method")
-			t.Assert(req.URL.String(), "https://v3.recurly.com/resources/abcd1234", "Request URL")
-			// assert headers and other request properties
+			t.Assert(req.Header.Get("Content-Type"), "application/json; charset=utf-8", "Preserve Internal Headers")
 		},
 		MakeResponse: func(req *http.Request) *http.Response {
 			// default headers set, we may want to customize though
@@ -211,6 +209,26 @@ func TestValidatePathParameters(test *testing.T) {
 	}
 	client := scenario.MockHTTPClient()
 
-	_, err := client.GetResource("")
-	t.Assert(err.Error(), "Operation parameters cannot be empty strings.", "err.Error()")
+	header := http.Header{"Content-Type": []string{"Custom-Value"}}
+	client.GetResource("abcd1234", WithHeader(header))
+}
+
+func TestSetIdempotencyKey(test *testing.T) {
+	t := &T{test}
+
+	key := "Doug"
+
+	scenario := &Scenario{
+		T: t,
+		AssertRequest: func(req *http.Request) {
+			t.Assert(req.Header.Get("Idempotency-Key"), key, "Set Idempotency Key")
+		},
+		MakeResponse: func(req *http.Request) *http.Response {
+			// default headers set, we may want to customize though
+			return mockResponse(req, 200, String(`{"id": "abcd1234"}`))
+		},
+	}
+	client := scenario.MockHTTPClient()
+
+	client.GetResource("abcd1234", WithIdempotencyKey(key))
 }
