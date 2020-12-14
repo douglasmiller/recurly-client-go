@@ -2611,7 +2611,7 @@ type ListCustomFieldDefinitionsParams struct {
 	EndTime *time.Time
 
 	// RelatedType - Filter by related type.
-	RelatedType *string
+	RelatedType RelatedType
 }
 
 func (list *ListCustomFieldDefinitionsParams) URLParams() []KeyValue {
@@ -2641,8 +2641,8 @@ func (list *ListCustomFieldDefinitionsParams) URLParams() []KeyValue {
 		options = append(options, KeyValue{Key: "end_time", Value: formatTime(*list.EndTime)})
 	}
 
-	if list.RelatedType != nil {
-		options = append(options, KeyValue{Key: "related_type", Value: *list.RelatedType})
+	if list.RelatedType != UnsetEnum {
+		options = append(options, KeyValue{Key: "related_type", Value: list.RelatedType.String()})
 	}
 
 	return options

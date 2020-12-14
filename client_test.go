@@ -17,7 +17,7 @@ func TestGetResource200(test *testing.T) {
 		},
 		MakeResponse: func(req *http.Request) *http.Response {
 			// default headers set, we may want to customize though
-			return mockResponse(req, 200, String(`{"id": "abcd1234"}`))
+			return mockResponse(req, 200, String(`{"id": "abcd1234", "related_type": "account"}`))
 		},
 	}
 	client := scenario.MockHTTPClient()
@@ -25,6 +25,7 @@ func TestGetResource200(test *testing.T) {
 	resource, err := client.GetResource("abcd1234")
 	t.Assert(err, nil, "Error not expected")
 	t.Assert(resource.Id, "abcd1234", "resource.Id")
+	t.Assert(resource.RelatedType, AccountEnum, "resource.RelatedType")
 }
 
 func TestGetResource404(test *testing.T) {
@@ -56,7 +57,7 @@ func TestCreateResource201(test *testing.T) {
 		AssertRequest: func(req *http.Request) {
 			t.Assert(req.Method, http.MethodPost, "HTTP Method")
 			t.Assert(req.URL.String(), "https://v3.recurly.com/resources", "Request URL")
-			t.Assert(bodyToString(req.Body), `{"string":"hello world"}`, "Request Body")
+			t.Assert(bodyToString(req.Body), `{"string":"hello world","related_type":"account"}`, "Request Body")
 		},
 		MakeResponse: func(req *http.Request) *http.Response {
 			body := `{ "id": "abcd1234" }`
@@ -66,7 +67,8 @@ func TestCreateResource201(test *testing.T) {
 	client := scenario.MockHTTPClient()
 
 	body := &ResourceCreate{
-		String: "hello world",
+		String:      "hello world",
+		RelatedType: AccountEnum,
 	}
 	resource, err := client.CreateResource(body)
 	t.Assert(err, nil, "Error not expected")

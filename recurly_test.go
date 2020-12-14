@@ -111,6 +111,7 @@ type RecurlyResource struct {
 	Float       float64       `json:"float,omitempty"`
 	DateTime    time.Time     `json:"date_time,omitempty"`
 	SubResource SubResource   `json:"sub_resource,omitempty"`
+	RelatedType RelatedType   `json:"related_type,omitempty"`
 	StrArray    []string      `json:"str_array,omitempty"`
 	SubArray    []SubResource `json:"sub_array,omitempty"`
 }
@@ -138,7 +139,8 @@ func (resource *SubResource) setResponse(res *ResponseMetadata) {
 }
 
 type ResourceCreate struct {
-	String string `json:"string,omitempty"`
+	String      string      `json:"string,omitempty"`
+	RelatedType RelatedType `json:"related_type,omitempty"`
 }
 
 // We also implement fake CRUD operations for these fake resources

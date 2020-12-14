@@ -20,7 +20,7 @@ type CustomFieldDefinition struct {
 	Object string `json:"object,omitempty"`
 
 	// Related Recurly object type
-	RelatedType string `json:"related_type,omitempty"`
+	RelatedType RelatedType `json:"related_type,omitempty"`
 
 	// Used by the API to identify the field or reading and writing. The name can only be used once per Recurly object type.
 	Name string `json:"name,omitempty"`
